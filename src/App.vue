@@ -4,6 +4,49 @@ import { reactive, ref } from 'vue';
 const titulo = ref('Meu VueJS!')
 const mostrarResultado = ref(false)
 
+const categorias = [
+  {
+    id: 1,
+    nome: 'Joias'
+  },
+  {
+    id: 2,
+    nome: 'Eletrônicos'
+  },
+  {
+    id: 3,
+    nome: 'Vestuário'
+  },
+  {
+    id: 4,
+    nome: 'Alimentos'
+  },
+  {
+    id: 5,
+    nome: 'Brinquedos'
+  },
+  {
+    id: 6,
+    nome: 'Livros'
+  },
+  {
+    id: 7,
+    nome: 'Móveis'
+  },
+  {
+    id: 8,
+    nome: 'Decoração'
+  },
+  {
+    id: 9,
+    nome: 'Cosmédicos'
+  },
+  {
+    id: 10,
+    nome: 'Outros'
+  }
+]
+
 const produto = reactive({
   nome: '',
   preco: 0,
@@ -15,6 +58,13 @@ function formatarPreco(preco) {
   return `R$ ${preco.toFixed(2).replace('.', ',')}`
 }
 
+function enviarForm() {
+  if (produto.estoque < 0) {
+    alert('Quantidade não pode ser negativa')
+    return
+  }
+  mostrarResultado.value = !mostrarResultado.value
+}
 </script>
 
 <template>
@@ -24,23 +74,30 @@ function formatarPreco(preco) {
       <h2>Formulário</h2>
       <input type="text" v-model="titulo">
       <hr />
-      <div class="row">
-        <label for="">Nome: </label>
-        <input type="text" v-model="produto.nome">
-      </div>
-      <div class="row">
-        <label for="">Preço: </label>
-        <input type="number" v-model="produto.preco">
-      </div>
-      <div class="row">
-        <label for="">Estoque: </label>
-        <input type="text" v-model="produto.estoque">
-      </div>
-      <div class="row">
-        <label for="">Categorias: </label>
-        <input type="text" v-model="produto.categorias">
-      </div>
-      <button @click="mostrarResultado = !mostrarResultado">Mostrar resultado</button>
+      <form @submit.prevent="enviarForm()">
+        <div class="row">
+          <label for="">Nome: </label>
+          <input type="text" v-model="produto.nome" required>
+        </div>
+        <div class="row">
+          <label for="">Preço: </label>
+          <input type="number" v-model="produto.preco">
+        </div>
+        <div class="row">
+          <label for="">Estoque: </label>
+          <input type="text" v-model="produto.estoque">
+        </div>
+
+        <fieldset>
+          <legend>Categorias:</legend>
+          <div v-for="categoria in categorias" :key="categoria.id">
+            <input type="checkbox" v-model="produto.categorias" :value="categoria.id"> {{ categoria.nome }}
+          </div>
+
+        </fieldset>
+
+        <button @click="mostrarResultado = !mostrarResultado">Mostrar resultado</button>
+      </form>
     </div>
     <Transition>
       <div v-if="mostrarResultado" class="resultado">
